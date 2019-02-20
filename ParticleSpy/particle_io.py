@@ -9,6 +9,7 @@ import h5py
 from ParticleSpy.ptcl_class import Particle, Particle_list
 import hyperspy as hs
 import numpy as np
+import csv
 
 def save_plist(p_list,filename):
     f = h5py.File(filename,'w')
@@ -50,3 +51,24 @@ def load_plist(filename):
     
     f.close()
     return(p_list)
+
+def read_csv(dir_csv, col_index=None, delimiter=' ',  dtype='float'):
+    '''
+    Read csv files, 
+    give column index and return all values under than column as a list
+    '''
+    with open(dir_csv, newline='') as f:
+        reader = csv.reader(f)
+        f_aslist = []
+        for row in reader:
+            f_aslist.append(row)   
+            
+    col_list = []
+    for i, row in enumerate(f_aslist):
+        col_list.append(row[col_index])
+    col_list.pop(0)#remove the title row
+    
+    if dtype == 'float':
+        col_list = [float(x) for x in col_list]
+    
+    return col_list
