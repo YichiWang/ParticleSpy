@@ -65,7 +65,7 @@ def ParticleAnalysis(acquisition,parameters,particles=None,mask=np.zeros((1))):
         
     for region in regionprops(labeled, coordinates='rc'): #'count' start with 1, 0 is background
         p = Particle()
-              
+
         maskp = np.zeros_like(image.data)
         maskp[labeled==region.label] = 1
         
@@ -232,27 +232,44 @@ def timeseriesanalysis(particles,max_dist=1,memory=3,properties=['area']):
     return(t)
     
 def store_image(particle,image,params):
+    
     ii = np.where(particle.mask)
             
     box_x_min = np.min(ii[0])
-    box_x_max = np.max(ii[0])+1
+    box_x_max = np.max(ii[0])
     box_y_min = np.min(ii[1])
-    box_y_max = np.max(ii[1])+1
+    box_y_max = np.max(ii[1])
     pad = params.store['pad']
     
+    if pad!=None:
+        if box_y_min-pad < 0:
+            y_min = 0
+        else:
+            y_min = box_y_min - pad
+        if box_y_max+pad > particle.mask.shape[1]:
+            y_max = particle.mask.shape[1]
+        else:
+            y_max = box_y_max + pad
+        if box_x_min-pad < 0:
+            x_min = 0
+        else:
+            x_min = box_x_min - pad
+        if box_x_max+pad > particle.mask.shape[0]:
+            x_max = particle.mask.shape[0]
+        else:
+            x_max = box_x_max + pad
+
+        p_boxed = image.isig[(y_min):(y_max),(x_min):(x_max)].deepcopy()
+
+    else:
+        p_boxed = image.isig[(box_y_min):(box_y_max),(box_x_min):(box_x_max)].deepcopy()
+
     if params.store['bkg_sub']==True:
-        image.data = image.data - particle.properties['background']['value']
+        p_boxed.data = p_boxed.data - particle.properties['background']['value']
     
     if params.store['p_only']==True:
-        image.data = image.data*particle.mask
-    
-    if pad!=None:
-        if box_y_min-pad > 0 and box_x_min-pad > 0 and box_x_max+pad < particle.mask.shape[0] and box_y_max+pad < particle.mask.shape[1]:
-            p_boxed = image.isig[(box_y_min-pad):(box_y_max+pad),(box_x_min-pad):(box_x_max+pad)]
-        else:
-            p_boxed = image.isig[(box_y_min):(box_y_max),(box_x_min):(box_x_max)]
-    else:
-        p_boxed = image
+        p_boxed.data = p_boxed.data*particle.mask[(box_x_min):(box_x_max),(box_y_min):(box_y_max)]
+
     particle.store_im(p_boxed)
     
 def store_maps(particle,ac,params):
