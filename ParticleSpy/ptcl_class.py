@@ -257,7 +257,7 @@ class Particle_list(object):
             
             particle.image.axes_manager[0].size = particle.image.data.shape[0]
             particle.image.axes_manager[1].size = particle.image.data.shape[1]
-            
+
     def show(self, param='image', cols=None, output=False):
         """
         Display all particle images or other parameters.
