@@ -258,18 +258,16 @@ class Particle_list(object):
             particle.image.axes_manager[0].size = particle.image.data.shape[0]
             particle.image.axes_manager[1].size = particle.image.data.shape[1]
             
-    def show(self, param='Image', cols=None, output=False):
+    def show(self, param='image', cols=None, output=False):
         """
-        display all particle images or other parameters
+        Display all particle images or other parameters.
 
         Parameters
         ----------
-        param : str, optional
-            DESCRIPTION. The default is ['Image'].
-            'Image'
-            'maps'
-            'area'
-            'circularity'
+        param (Default = image): str, optional
+            Change this to show either image or mask.
+        cols: int, optional
+            Set a specific number of columns if required.
         """
         self.normalize_boxing()
         
@@ -278,7 +276,7 @@ class Particle_list(object):
             cols = int(np.ceil(np.sqrt(num)))
         data_ls = []
         for index in range(num):
-            if param == 'Image':
+            if param == 'image':
                 data_ls.append(self.list[index].image.data)
             elif param == 'mask':
                 data_ls.append(self.list[index].mask)
@@ -304,7 +302,7 @@ class Particle_list(object):
         """
         assert((titles is None) or (len(images) == len(titles)))
         n_images = len(images)
-        if titles is None: titles = ['Image (%d)' % i for i in range(1, n_images+1)]
+        if titles is None: titles = ['Particle (%d)' % i for i in range(1, n_images+1)]
         fig = plt.figure()
         for n, (image, title) in enumerate(zip(images, titles)):
             a = fig.add_subplot(cols, np.ceil(n_images/float(cols)), n+1)
