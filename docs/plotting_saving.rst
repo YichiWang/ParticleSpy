@@ -36,6 +36,19 @@ Plotting of more than one Particle_list can be done using the top level :py:meth
     >>> ps.plot([particles1,particles2],['area','circularity'])
 
 
+Showing Particle Images/Masks
+-----------------------------
+
+It is possible to show all particle images or particle masks using the :py:meth:`~.Particle_list.show` method.
+
+.. code-block:: python
+
+    >>> particles.show('image')
+    >>> particles.show('mask')
+
+In order to show images you must have store_images set to True in the parameters object when using :py:meth:`~.ParticleAnalysis`.
+
+
 Ploting Radial Profiles
 -----------------------
 
